@@ -1,0 +1,148 @@
+#!/bin/bash
+
+iniciar(){
+
+# Abre a faixa de enderecos da rede local:
+iptables -A INPUT -s 192.168.1.0/255.255.255.0 -j ACCEPT
+
+# Abre uma porta
+iptables -A INPUT -p tcp -m tcp --dport 21 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 25 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 53 -j ACCEPT
+iptables -A INPUT -p udp -m udp --dport 53 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 25 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 110 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 143 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 465 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 587 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 993 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 953 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 995 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 5030 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 3010 -j ACCEPT
+#iptables -A INPUT -p tcp -m tcp --dport 5553 -j ACCEPT
+#iptables -A INPUT -p tcp -m tcp --dport 2234 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 5000:5010 -j ACCEPT
+iptables -A INPUT -p udp -m udp --dport 5000:5010 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 60000 -j ACCEPT
+iptables -A INPUT -p udp -m udp --dport 60000 -j ACCEPT
+iptables -A INPUT -p udp -m udp --dport 500 -j ACCEPT
+iptables -A INPUT -p udp -m udp --dport 4500 -j ACCEPT
+iptables -A INPUT -s 192.168.1.0/24 -p tcp -m tcp --dport 3000 -j ACCEPT
+iptables -A INPUT -s 192.168.1.0/24 -p tcp -m tcp --dport 3128 -j ACCEPT
+iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A INPUT -s 127.0.0.1 -j ACCEPT
+iptables -A INPUT -i tap+ -j ACCEPT
+iptables -A INPUT -s 192.168.1.0/255.255.255.0 -p tcp -m tcp --dport 139 -j ACCEPT
+iptables -A INPUT -s 192.168.1.0/255.255.255.0 -p tcp -m tcp --dport 445 -j ACCEPT
+iptables -A INPUT -s 192.168.1.0/255.255.255.0 -p udp -m udp --dport 137:138 -j ACCEPT
+iptables -I INPUT -p tcp -m state --state NEW -s 127.0.0.1 --dport 60000 -j ACCEPT
+
+iptables -A OUTPUT -s 187.54.136.112/28 -p tcp --sport 587 -j ACCEPT
+# Abre as portas para conexao VPN
+iptables -A INPUT -p tcp -m tcp --dport 5000:5010 -j ACCEPT
+
+# Abre conexao externa para o endereco 192.168.1.250 ###SRV-TS###
+iptables -A FORWARD -d 192.168.1.250 -p tcp -m tcp --dport 3389 -j ACCEPT
+iptables -t nat -A PREROUTING -d 187.54.136.114 -p tcp -m tcp --dport 3389 -j DNAT --to-destination 192.168.1.250
+
+# Abre conexao externa para o endereco 192.168.1.120 ###ALFA###
+iptables -A FORWARD -d 192.168.1.120 -p tcp -m tcp --dport 3389 -j ACCEPT
+iptables -t nat -A PREROUTING -d 187.54.136.116 -p tcp -m tcp --dport 3389 -j DNAT --to-destination 192.168.1.120
+
+# Abre conexao externa para o endereco 192.168.1.1 ###BETA###
+#iptables -A FORWARD -d 192.168.1.253 -p tcp -m tcp --dport 3389 -j ACCEPT
+#iptables -t nat -A PREROUTING -d 187.54.136.116 -p tcp -m tcp --dport 3389 -j DNAT --to-destination 192.168.1.253
+
+#iptables -t nat -A POSTROUTING -s 192.168.1.120 -o eth0 -j MASQUERADE
+
+##IPS BLOQUEADOS ACESSO A INTERNET===================================##
+#Maquina do CNC#
+iptables -A FORWARD -s 192.168.1.90 -j DROP
+iptables -A FORWARD -s 192.168.1.5 -j DROP
+iptables -A FORWARD -s 192.168.1.12 -j DROP
+#Maquinas NUPED##
+iptables -A FORWARD -s 192.168.1.117 -j DROP
+iptables -A FORWARD -s 192.168.1.22 -j DROP
+iptables -A FORWARD -s 192.168.1.38 -j DROP
+iptables -A FORWARD -s 192.168.1.132 -j DROP
+iptables -A FORWARD -s 192.168.1.18 -j DROP
+iptables -A FORWARD -s 192.168.1.15 -j DROP
+iptables -A FORWARD -s 192.168.1.17 -j DROP
+iptables -A FORWARD -s 192.168.1.21 -j DROP
+iptables -A FORWARD -s 192.168.1.171 -j DROP
+iptables -A FORWARD -s 192.168.1.34 -j DROP
+iptables -A FORWARD -s 192.168.1.35 -j DROP
+iptables -A FORWARD -s 192.168.1.79 -j DROP
+iptables -A FORWARD -s 192.168.1.80 -j DROP
+iptables -A FORWARD -s 192.168.1.81 -j DROP
+iptables -A FORWARD -s 192.168.1.82 -j DROP
+iptables -A FORWARD -s 192.168.1.83 -j DROP
+iptables -A FORWARD -s 192.168.1.84 -j DROP
+iptables -A FORWARD -s 192.168.1.85 -j DROP
+iptables -A FORWARD -s 192.168.1.86 -j DROP
+iptables -A FORWARD -s 192.168.1.87 -j DROP
+iptables -A FORWARD -s 192.168.1.88 -j DROP
+iptables -A FORWARD -s 192.168.1.89 -j DROP
+iptables -A FORWARD -s 192.168.1.95 -j DROP
+#iptables -A FORWARD -s 192.168.1.250 -j DROP
+##====================================================================##
+
+# VPN
+iptables -t nat -s 10.1.1.2 -A POSTROUTING -o eth1 -j MASQUERADE
+iptables -t nat -s 10.2.2.2 -A POSTROUTING -o eth1 -j MASQUERADE
+iptables -t nat -s 10.3.3.2 -A POSTROUTING -o eth1 -j MASQUERADE
+
+
+#PROXY
+#iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3128
+#iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
+
+iptables -t nat -A PREROUTING -i eth1 -p tcp -s 192.168.1.0/24 --dport 80 -j REDIRECT --to-port 3128
+iptables -A FORWARD -i eth1 -p tcp --dport 443 -j ACCEPT
+
+#Libera MSN para ips especificos
+#iptables -A FORWARD -s 192.168.1.ip/24 -p tcp --dport 1863 -j ACCEPT
+#iptables -A FORWARD -s 192.168.1.ip/24 -d loginnet.passport.com -j ACCEPT
+
+# Bloqueia MSN
+#iptables -I FORWARD -s 192.168.1.0/24 -p tcp --dport 1863 -j REJECT
+#iptables -I FORWARD -s 192.168.1.0/24 -d loginnet.passport.com -j REJECT
+#
+#Bloqueia o Meebo
+#iptables -I FORWARD -s 192.168.1.0/24 -d 74.114.28.110  -j REJECT
+#iptables -I FORWARD -s 192.168.1.0/24 -d www.meebo.com -j REJECT
+
+#Bloqueia do Windows
+#iptables -I FORWARD -s 192.168.1.0/24 -d 189.11.250.115  -j REJECT
+#iptables -I FORWARD -s 192.168.1.0/24 -d download.windowsupdate.com -j REJECT
+
+
+# Ignora pings
+#iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
+
+
+# Proteje contra spoofing
+echo 1 > /proc/sys/net/ipv4/conf/default/rp_filter
+echo 1 > /proc/sys/net/ipv4/icmp_echo_ignore_all
+
+echo "Regras de firewall ativadas :D"
+}
+parar(){
+	iptables -F
+        iptables -X
+        iptables -t nat -F
+        iptables -t nat -X
+	iptables -P INPUT ACCEPT
+	iptables -P OUTPUT ACCEPT
+	echo "Regras de firewall desativadas :b"
+}
+case "$1" in
+	"start") iniciar ;;
+	"stop") parar ;;
+	"restart") parar; iniciar;;
+	*) echo "Use os parametros start ou stop"
+esac
