@@ -1,0 +1,51 @@
+#!/bin/sh
+
+
+echo "####################################################"
+echo "Desenvolvido por: Rivelino Hock"
+echo "Bacharel em Sistemas de Informacao"
+echo "####################################################"
+echo " "
+
+
+echo "Informe o nome da maquina em letras minusculas:-- EX: rsXXXXtoYYY "
+read nome
+
+echo "Me diga o ID do equipamento:"
+read id
+
+echo "$nome" > /etc/hostname 
+
+
+
+
+#########################################################################	
+
+
+dhclient
+
+su-to-root -X -c /etc/opt/elo-usb/elova
+
+
+
+#######################################################################
+
+
+aptitude update
+aptitude install openssh-server
+apt-get install x11vnc
+aptitude install numlockx
+
+
+
+
+
+
+echo "tag=TOTEM" >> /etc/ocsinventory/ocsinventory-agent.cfg
+
+
+
+
+
+
+x11vnc -display :0 -auth /var/lib/gdm :0.Xauth
