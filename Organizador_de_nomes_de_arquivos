@@ -1,0 +1,77 @@
+#!/bin/bash
+#
+#
+#
+#Utilização:
+#	1)Jogue esse scritp em uma pastas que deseja organizar as midias
+#	2)Crie as pastas com uma palavra de referência para suas mídias:
+#		Ex: Seus Arquivos: Alguma_Coisa.mp3, alguma_coisa_02.mp4, ALGUMA COISA 03.mp4, outra coisa 01.mp4
+#		O nome da pasta pode ser Coisa, não importando se as letras são maiúsculas ou minúsculas
+#	
+#	3)Entre na pasta das suas mídias pelo terminal e digite: ./<nomedoscript>.sh
+#
+
+ls -d */>pastas_antes.txt #Lista os diretórios atuais em um arquivo 
+num_dir=`wc -l pastas_antes.txt | cut -c 1`
+
+
+
+#Transformas todos os arquivos/pastas para minúsculo e tirar os espaços
+for i in *
+    do
+        arq_final=`echo "$i" |tr [:upper:] [:lower:]`    
+        arq_final=${arq_final// /_}
+	mv "$i" $arq_final 
+done
+
+
+
+
+#Começar a organizar 
+ls -d */>pastas.txt #
+
+
+
+for i in {1..99};
+do
+	D=`cat pastas.txt| sed -n -e "$i"p` #Pega o nome da primeira pasta ex:"Exemplo/"
+	D_nome=${D//// } #Retirar o "/" para ficar somente o nome
+	ls *.mp4 | grep $D_nome>midias.txt
+	num_arq=`wc -l midias.txt | cut -c 1`
+	
+	if [[ "$num_arq" -ne "0" ]]; then
+		for count in {1..99};
+		do		
+			a=`cat midias.txt| sed -n -e "$count"p`	
+			mv "$a" "$D"		
+	
+			if [[ "$count" -eq "$num_arq" ]]; then
+				echo "Parou_ARQ"				
+				break 
+			fi		
+		done	
+	fi
+
+
+	if [[ "$i" -eq "$num_dir" ]]; then
+		echo "Parou"		
+		break 
+	fi	
+done
+
+#Voltar com os nomes antigos
+for i in {1..99};
+do 
+	D_anterior=`cat pastas_antes.txt| sed -n -e "$i"p`
+	D_atual=`cat pastas.txt| sed -n -e "$i"p`
+	mv $D_atual $D_anterior
+	if [[ "$i" -eq "$num_dir" ]]; then
+		echo "Parou"		
+		break 
+	fi
+done
+
+#Remover aquivos extras
+rm pastas.txt
+rm pastas_antes.txt
+rm midias.txt
