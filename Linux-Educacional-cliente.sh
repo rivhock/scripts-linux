@@ -17,6 +17,7 @@ mkdir /home/publica
 
 chmod 777 /home/publica
 
+## Deve-se trocar o IP conforme for o endereço do servidor
 echo  '192.168.0.2:/home/publica /home/publica nfs rw,users,exec 0 0' >> /etc/fstab  
 
 echo  '*/1 *   * * *  root   mount  192.168.0.2:/home/publica  /home/publica' >> /etc/crontab
