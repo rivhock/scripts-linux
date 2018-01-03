@@ -38,4 +38,6 @@ echo  'SERVER = 192.168.0.2' >> /etc/default/epoptes-client
 echo  '192.168.0.2 SERVER' >> /etc/hosts
 epoptes-client -c
 
+echo " Pressione   ENTER  para reboot"
+read ok
 reboot
